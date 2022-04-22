@@ -15,9 +15,10 @@
 - JavaScript
 - Cloudinary
 
-### Reach
+### Stretch Goal
 - Search Bar
-- 
+- Friends
+- Invites
 
 Link to the API-matching GitHub: 
 
