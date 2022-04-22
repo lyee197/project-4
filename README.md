@@ -1,4 +1,4 @@
-# project-4 Something with Pets and Events
+# project-4 Play Date
 1. When Opening the website, the user will be Asked to Login/SignUp before entering the main website!
 2. Once logged in, the user will see events that they are attending, other users that they friended, and other pets that they may be following
 3. Clicking on the events tab will bring up a page with Events upcoming and/or Followed Events. You will also be able to Create your own events
@@ -8,14 +8,21 @@
 
 ## Technologies Used:
 - React
+- Express
+- Node
+- Mongodb
 - Bootstrap
 - JavaScript
-- Cludinary
+- Cloudinary
+
+### Reach
+- Search Bar
+- 
 
 Link to the API-matching GitHub: 
 
 ## ERD
-![ERD](project-4-erd.PNG)
+![ERD](project-4-erd1.PNG)
 ## Wireframe
 ![Wireframe one](project-4-wireframe1.PNG)
 ![Wireframe two](project-4-wireframe2.PNG)
