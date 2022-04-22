@@ -25,7 +25,7 @@ Link to the API-matching GitHub:
 ## ERD
 ![ERD](project-4-erd1.PNG)
 ## Wireframe
-![Wireframe one](project-4-wireframe1.PNG)
-![Wireframe two](project-4-wireframe2.PNG)
-![Wireframe three](project-4-wireframe3.PNG)
-![Wireframe four](project-4-wireframe4.PNG)
+![Wireframe one](/img/project-4-erd1.PNG)
+![Wireframe two](/img/project-4-wireframe2.PNG)
+![Wireframe three](/img/project-4-wireframe3.PNG)
+![Wireframe four](/img/project-4-wireframe4.PNG)
