@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const petSchema = require('./pet')
 
 const userSchema = new mongoose.Schema(
 	{
@@ -12,6 +13,9 @@ const userSchema = new mongoose.Schema(
 			required: true,
 		},
 		token: String,
+		pets: {
+			type: [petSchema]
+		}
 	},
 	{
 		timestamps: true,
