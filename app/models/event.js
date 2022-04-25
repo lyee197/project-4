@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const petSchema = require('./pet')
 
 const eventSchema = new mongoose.Schema(
 	{
@@ -19,10 +20,12 @@ const eventSchema = new mongoose.Schema(
 			required: true,
 			
 		},
+		attendies: {
+			type: [petSchema]
+		},
 		owner: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
-			required: true,
 		}
 	},
 	{
