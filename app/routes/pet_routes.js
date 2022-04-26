@@ -62,6 +62,7 @@ router.post('/pets', requireToken, (req, res, next) => {
 	req.body.pet.owner = req.user.id
 
 	Pet.create(req.body.pet)
+        // .populate('owner')
 		// respond to succesful `create` with status 201 and JSON of new "event"
 		.then((pet) => {
 			res.status(201).json({ pet: pet.toObject() })

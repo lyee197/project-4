@@ -14,7 +14,8 @@ const userSchema = new mongoose.Schema(
 		},
 		token: String,
 		pets: {
-			type: [petSchema]
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Pet'
 		}
 	},
 	{

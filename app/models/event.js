@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const commentSchema = require('./comment')
 const petSchema = require('./pet')
 
 const eventSchema = new mongoose.Schema(
@@ -21,11 +22,15 @@ const eventSchema = new mongoose.Schema(
 			
 		},
 		attendies: {
-			type: [petSchema]
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Pet'
 		},
 		owner: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
+		},
+		comments: {
+			type: [commentSchema]
 		}
 	},
 	{
