@@ -96,15 +96,15 @@ router.patch('/pets/:id', requireToken, removeBlanks, (req, res, next) => {
 })
 
 // DESTROY
-// DELETE /events/5a7db6c74d55bc51bdf39793
-router.delete('/events/:id', requireToken, (req, res, next) => {
-	Event.findById(req.params.id)
+// DELETE /pets/5a7db6c74d55bc51bdf39793
+router.delete('/pets/:id', requireToken, (req, res, next) => {
+	Pet.findById(req.params.id)
 		.then(handle404)
-		.then((event) => {
-			// throw an error if current user doesn't own `event`
-			requireOwnership(req, event)
-			// delete the event ONLY IF the above didn't throw
-			event.deleteOne()
+		.then((pet) => {
+			// throw an error if current user doesn't own `pet`
+			requireOwnership(req, pet)
+			// delete the pet ONLY IF the above didn't throw
+			pet.deleteOne()
 		})
 		// send back 204 and no content if the deletion succeeded
 		.then(() => res.sendStatus(204))
