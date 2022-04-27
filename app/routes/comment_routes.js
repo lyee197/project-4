@@ -43,7 +43,9 @@ router.post('/reviews/:eventId', removeBlanks, (req, res, next) => {
             return comment.save()
         })
         // the we send the comment as json
-        .then(event => res.status(201).jsoon({ event: event}))
+        .then(event => res.status(201).json({ event: event}))
         // catch errors and send to the handler
         .catch(next)
 })
+
+module.exports = router

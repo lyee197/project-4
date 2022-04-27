@@ -7,6 +7,7 @@ const cors = require('cors')
 const eventRoutes = require('./app/routes/event_routes')
 const userRoutes = require('./app/routes/user_routes')
 const petRoutes = require('./app/routes/pet_routes')
+const commentRoutes = require('./app/routes/comment_routes')
 
 // require middleware
 const errorHandler = require('./lib/error_handler')
@@ -69,6 +70,7 @@ app.use(requestLogger)
 app.use(eventRoutes)
 app.use(userRoutes)
 app.use(petRoutes)
+app.use(commentRoutes)
 
 // register error handling middleware
 // note that this comes after the route middlewares, because it needs to be
