@@ -60,7 +60,7 @@ router.get('/events/:id', /*requireToken,*/ (req, res, next) => {
 router.post('/events', requireToken, (req, res, next) => {
 	// set owner of new event to be current user
 	req.body.event.owner = req.user.id
-	console.log(req.body.event.owner)
+
 	Event.create(req.body.event)
 		// respond to succesful `create` with status 201 and JSON of new "event"
 		.then((event) => {
