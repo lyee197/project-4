@@ -24,8 +24,8 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 // POST create a comment
-// POST /review/:eventId
-router.post('/reviews/:eventId', removeBlanks, (req, res, next) => {
+// POST /comments/:eventId
+router.post('/comments/:eventId', removeBlanks, (req, res, next) => {
     // get our comment from req.body
     const comment = req.body.comment
     // get our eventId from req.params.id
@@ -47,5 +47,27 @@ router.post('/reviews/:eventId', removeBlanks, (req, res, next) => {
         // catch errors and send to the handler
         .catch(next)
 })
+
+// UPDATE
+// PATCH /comments
+router.patch('/comments/:eventId/:commentId', requireToken, removeBlanks, (req, res, next) => {
+    const commentId = req.params.commentId
+    const eventId = req.params.eventId
+
+    Event.findById(eventId)
+        .then(handle404)
+        .then(event => {
+            const theComment = event.comments.id(commentId)
+            console.log('this is the original event', theComment)
+            //requireOwnership(req, event)
+
+            theComment.set(req.body.comment)
+
+            return event.save()
+        })
+        .then(() => res.sendStatus(204))
+        .catch(next)
+})
+
 
 module.exports = router
