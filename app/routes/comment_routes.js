@@ -69,5 +69,23 @@ router.patch('/comments/:eventId/:commentId', requireToken, removeBlanks, (req, 
         .catch(next)
 })
 
+// DELETE a comment
+// DELETE /comments/:eventId/:commentId
+router.delete('/comments/:eventId/:commentId', requireToken, (req, res, next) => {
+    const commentId = req.params.commentId
+    const eventId = req.params.eventId
+
+    Event.findById(eventId)
+        // if event not found, throw 404
+        .then(handle404)
+        .then(event => {
+            const theComment = event.comments.id(commentId)
+            theComment.remove()
+            // return the saved event
+            return event.save()
+        })
+        .then(() => res.sendStatus(204))
+        .catch(next)
+})
 
 module.exports = router

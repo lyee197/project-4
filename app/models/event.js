@@ -17,9 +17,13 @@ const eventSchema = new mongoose.Schema(
 			required: true,
 		},
 		event_type: {
+			// the condition is going to be a type: string
 			type: String,
+        	// but we'll use enum, so that we can get a few specific answers, and nothing else
+        	// enum is a validator on the type String, that says "you can only use the values that live in this array"
+			enum: ['public', 'private'],
+			default:"public",
 			required: true,
-			
 		},
 		attendies: {
 			type: mongoose.Schema.Types.ObjectId,

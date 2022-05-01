@@ -49,8 +49,8 @@ router.get('/pets/:id', /*requireToken,*/ (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Pet.findById(req.params.id)
 		.then(handle404)
-		// if `findById` is succesful, respond with 200 and "event" JSON
-		.then((event) => res.status(200).json({ event: event.toObject() }))
+		// if `findById` is succesful, respond with 200 and "pet" JSON
+		.then((pet) => res.status(200).json({ pet: pet.toObject() }))
 		// if an error occurs, pass it to the handler
 		.catch(next)
 })
