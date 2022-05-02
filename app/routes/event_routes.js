@@ -5,6 +5,7 @@ const passport = require('passport')
 
 // pull in Mongoose model for events
 const Event = require('../models/event')
+const Pet = require('../models/pet')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -48,6 +49,8 @@ router.get('/events', /*requireToken,*/ (req, res, next) => {
 router.get('/events/:id', /*requireToken,*/ (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Event.findById(req.params.id)
+		.populate('owner')
+		.populate('comments.author')
 		.then(handle404)
 		// if `findById` is succesful, respond with 200 and "event" JSON
 		.then((event) => res.status(200).json({ event: event.toObject() }))
@@ -94,6 +97,18 @@ router.patch('/events/:id', requireToken, removeBlanks, (req, res, next) => {
 		// if an error occurs, pass it to the handler
 		.catch(next)
 })
+
+// // UPDATE
+// // PATCH /events/5a7db6c74d55bc51bdf39793/addpets
+// router.patch('/events/:eventId/addpet/:petId', requireToken, removeBlanks, (req, res, next) => {
+// 	delete req._construct.body.event.owner
+
+// find the event
+// event.attendies.push(req.params.petId)
+// save event (like comments)
+// 	Event.findById(req.params.id)
+// 		Pet.find()
+// })
 
 // DESTROY
 // DELETE /events/5a7db6c74d55bc51bdf39793

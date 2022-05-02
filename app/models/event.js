@@ -25,17 +25,15 @@ const eventSchema = new mongoose.Schema(
 			default:"public",
 			required: true,
 		},
-		attendies: {
+		attendies: [{
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Pet'
-		},
+		}],
 		owner: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
 		},
-		comments: {
-			type: [commentSchema]
-		}
+		comments: [commentSchema]	
 	},
 	{
 		timestamps: true,

@@ -2,8 +2,10 @@ const mongoose = require('mongoose')
 
 const commentSchema = new mongoose.Schema(
     {
-        owner: {
-			type: String,
+        author: {
+			type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true
 		},
         comment: {
             type: String,

@@ -5,6 +5,7 @@ const passport = require('passport')
 
 // pull in mongoose model
 const Event = require('../models/event')
+const Comment = require('../models/comment')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -12,6 +13,8 @@ const customErrors = require('../../lib/custom_errors')
 
 // we'll use this function to send 404 when non-existant document is requested
 const handle404 = customErrors.handle404
+
+const requireOwnership = customErrors.requireOwnership
 
 // this is middleware that will remove blank fields from `req.body`, e.g.
 // { event: { title: '', text: 'foo' } } -> { event: { text: 'foo' } }
@@ -25,9 +28,10 @@ const router = express.Router()
 
 // POST create a comment
 // POST /comments/:eventId
-router.post('/comments/:eventId', removeBlanks, (req, res, next) => {
+router.post('/comments/:eventId', requireToken, (req, res, next) => {
     // get our comment from req.body
     const comment = req.body.comment
+    comment.author = req.user.id
     // get our eventId from req.params.id
     const eventId = req.params.eventId
     // find the event
@@ -36,13 +40,14 @@ router.post('/comments/:eventId', removeBlanks, (req, res, next) => {
         .then(handle404)
         // push the comment to comments array
         .then(event => {
+            console.log('this is comment.author', comment.author)
             console.log('this is the event', event)
             console.log('this is the comment', comment)
             event.comments.push(comment)
             // save the comment
-            return comment.save()
-        })
-        // the we send the comment as json
+            return event.save()
+            })
+            // the we send the comment as json
         .then(event => res.status(201).json({ event: event}))
         // catch errors and send to the handler
         .catch(next)
