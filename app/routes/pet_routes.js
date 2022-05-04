@@ -30,17 +30,23 @@ const router = express.Router()
 // INDEX
 // GET /pets
 router.get('/pets', (req, res, next) => {
-    Pet.find()
-        .then((pets) => {
+	User.find()
+		.then((users) => {
+			return users.pets.map(user => user.pets.toObject())
+		})
+	.then(pets => res.status(200).json({pets}))
+	.catch(next)
+    // Pet.find()
+    //     .then((pets) => {
             // `pets` will be an array of Mongoose documents
             // we want to convert each one to a POJO, so we use `.map` to
             // apply `.toObject` to each one
-            return pets.map((pet) => pet.toObject())
-        })
+        //     return pets.map((pet) => pet.toObject())
+        // })
         // respond with status 200 and JSON of the pets
-        .then((pets) => res.status(200).json({ pets: pets }))
+        // .then((pets) => res.status(200).json({ pets: pets }))
         // if an error occurs, pass it to the handler
-        .catch(next)
+        // .catch(next)
     })
 
 
