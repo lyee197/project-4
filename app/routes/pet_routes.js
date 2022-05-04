@@ -5,6 +5,7 @@ const passport = require('passport')
 
 // pull in mongoose model
 const Pet = require('../models/pet')
+const User = require('../models/user')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -59,18 +60,34 @@ router.get('/pets/:id', /*requireToken,*/ (req, res, next) => {
 // POST /pets
 router.post('/pets', requireToken, (req, res, next) => {
 	// set owner of new pet to be current user
+	const newPet = req.body.pet
+	const userId = req.user.id
 	req.body.pet.owner = req.user.id
+	
+	User.findById(userId)
+		.then(handle404)
+		.then(user => {
+			console.log('this is the user', user)
+			console.log('this is the pet', newPet)
+			user.pets.push(newPet)
+			return user.save()
+		})
+		// then we send the pet as json
+		.then(pet => res.status(201).json({ pet: pet }))
+		// catch errors and send to the handler
+		.catch(next)
+	// req.body.pet.owner = req.user.id
 
-	Pet.create(req.body.pet)
+	// Pet.create(req.body.pet)
         // .populate('owner')
 		// respond to succesful `create` with status 201 and JSON of new "event"
-		.then((pet) => {
-			res.status(201).json({ pet: pet.toObject() })
-		})
+		// .then((pet) => {
+		// 	res.status(201).json({ pet: pet.toObject() })
+		// })
 		// if an error occurs, pass it off to our error handler
 		// the error handler needs the error message and the `res` object so that it
 		// can send an error message back to the client
-		.catch(next)
+		// .catch(next)
 })
 
 // UPDATE

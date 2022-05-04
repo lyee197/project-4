@@ -13,10 +13,7 @@ const userSchema = new mongoose.Schema(
 			required: true,
 		},
 		token: String,
-		pets: [{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Pet'
-		}]
+		pets: [petSchema]
 	},
 	{
 		timestamps: true,
