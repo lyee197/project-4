@@ -6,6 +6,7 @@ const passport = require('passport')
 // pull in mongoose model
 const Pet = require('../models/pet')
 const User = require('../models/user')
+const Event = require('../models/event')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -30,23 +31,17 @@ const router = express.Router()
 // INDEX
 // GET /pets
 router.get('/pets', (req, res, next) => {
-	User.find()
-		.then((users) => {
-			return users.pets.map(user => user.pets.toObject())
-		})
-	.then(pets => res.status(200).json({pets}))
-	.catch(next)
-    // Pet.find()
-    //     .then((pets) => {
+    Pet.find()
+        .then((pets) => {
             // `pets` will be an array of Mongoose documents
             // we want to convert each one to a POJO, so we use `.map` to
             // apply `.toObject` to each one
-        //     return pets.map((pet) => pet.toObject())
-        // })
+            return pets.map((pet) => pet.toObject())
+        })
         // respond with status 200 and JSON of the pets
-        // .then((pets) => res.status(200).json({ pets: pets }))
+        .then((pets) => res.status(200).json({ pets: pets }))
         // if an error occurs, pass it to the handler
-        // .catch(next)
+        .catch(next)
     })
 
 
@@ -56,7 +51,7 @@ router.get('/pets/:id', /*requireToken,*/ (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Pet.findById(req.params.id)
 		.then(handle404)
-		// if `findById` is succesful, respond with 200 and "pet" JSON
+		// if `findById` is succesful, respond with 200 and "event" JSON
 		.then((pet) => res.status(200).json({ pet: pet.toObject() }))
 		// if an error occurs, pass it to the handler
 		.catch(next)
@@ -66,34 +61,17 @@ router.get('/pets/:id', /*requireToken,*/ (req, res, next) => {
 // POST /pets
 router.post('/pets', requireToken, (req, res, next) => {
 	// set owner of new pet to be current user
-	const newPet = req.body.pet
-	const userId = req.user.id
 	req.body.pet.owner = req.user.id
-	
-	User.findById(userId)
-		.then(handle404)
-		.then(user => {
-			console.log('this is the user', user)
-			console.log('this is the pet', newPet)
-			user.pets.push(newPet)
-			return user.save()
-		})
-		// then we send the pet as json
-		.then(pet => res.status(201).json({ pet: pet }))
-		// catch errors and send to the handler
-		.catch(next)
-	// req.body.pet.owner = req.user.id
 
-	// Pet.create(req.body.pet)
-        // .populate('owner')
+	Pet.create(req.body.pet)
 		// respond to succesful `create` with status 201 and JSON of new "event"
-		// .then((pet) => {
-		// 	res.status(201).json({ pet: pet.toObject() })
-		// })
+		.then((pet) => {
+			res.status(201).json({ pet: pet.toObject() })
+		})
 		// if an error occurs, pass it off to our error handler
 		// the error handler needs the error message and the `res` object so that it
 		// can send an error message back to the client
-		// .catch(next)
+		.catch(next)
 })
 
 // UPDATE
@@ -119,9 +97,95 @@ router.patch('/pets/:id', requireToken, removeBlanks, (req, res, next) => {
 		.catch(next)
 })
 
+// UPDATE for Event
+// PATCH /events/5a7db6c74d55bc51bdf39793/addpets
+router.patch('/events/:eventId/:petId', requireToken, removeBlanks, (req, res, next) => {
+	// delete req._construct.body.event.owner
+	const eventId = req.params.eventId
+	const petId = req.params.petId
+	console.log('This is petId', petId)
+	console.log('This is eventId', eventId)
+	// find the event
+	// event.attendies.push(req.params.petId)
+	// save event (like comments)
+	Event.findById(eventId)
+		.then(handle404)
+		.then((event) => {
+				console.log('This is petId inside promise chain', petId)
+				console.log('this is the event', event)
+				event.attendies.push(petId)
+				Pet.findById(petId)
+					.then(pet => {
+						pet.events.push(eventId)
+						pet.save()
+						event.save()
+					})
+					.catch(next)
+		})
+	// if that succeeded, return 204 and no JSON
+	.then(() => res.sendStatus(204))
+	// if an error occurs, pass it to the handler
+	.catch(next)	
+})
+
+// UPDATE for User
+// PATCH /events/5a7db6c74d55bc51bdf39793/addpets
+router.patch('/user/:userId/:petId', requireToken, removeBlanks, (req, res, next) => {
+	// delete req._construct.body.user.owner
+	const userId = req.params.userId
+
+// find the user
+// user.attendies.push(req.params.petId)
+// save user (like comments)
+	User.findById(userId)
+		.then(handle404)
+		.then((user) => {
+			const petId = req.params.petId
+			user.pets.push(petId)
+		})
+		Pet.findById(petId)
+			.then(pet => {
+				pet.events.push(userId)
+				pet.save()
+				User.save()
+			})
+			.catch(next)
+		
+})
+
 // DESTROY
 // DELETE /pets/5a7db6c74d55bc51bdf39793
 router.delete('/pets/:id', requireToken, (req, res, next) => {
+	Pet.findById(req.params.id)
+		.then(handle404)
+		.then((pet) => {
+			// throw an error if current user doesn't own `pet`
+			requireOwnership(req, pet)
+			// delete the pet ONLY IF the above didn't throw
+			pet.deleteOne()
+		})
+		// send back 204 and no content if the deletion succeeded
+		.then(() => res.sendStatus(204))
+		// if an error occurs, pass it to the handler
+		.catch(next)
+})
+
+// DESTROY Pet FROM EVENT
+// DELETE /events/5a7db6c74d55bc51bdf39793
+router.delete('/events/:eventId/:petId', requireToken, (req, res, next) => {
+	const eventId = req.params.eventId
+	Event.findById(eventId)
+		.then(handle404)
+		.then((event) => {
+			const petId = req.params.petId
+			event.pets.remove(petId)
+		})
+		Pet.findById(petId)
+			.then(pet => {
+				pet.events.removes(eventId)
+				pet.save()
+				Event.save()
+			})
 	Pet.findById(req.params.id)
 		.then(handle404)
 		.then((pet) => {

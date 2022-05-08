@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const commentSchema = require('./comment')
-const petSchema = require('./pet')
+const User = require('./user')
+const Pet = require('./pet')
 
 const eventSchema = new mongoose.Schema(
 	{
@@ -25,7 +26,7 @@ const eventSchema = new mongoose.Schema(
 			default:"public",
 			required: true,
 		},
-		attendies: [{
+		attendants: [{
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'Pet'
 		}],

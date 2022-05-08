@@ -23,11 +23,15 @@ const petSchema = new mongoose.Schema(
             enum: ['dog', 'cat', 'rodent', 'fish', 'bird', 'other'],
             default: "other",
             required: true,
-        }
+        },
+        events: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Event'
+        }]
     },
     {
 		timestamps: true,
 	}
 )
 
-module.exports = petSchema
+module.exports = mongoose.model('Pet', petSchema)

@@ -6,6 +6,7 @@ const passport = require('passport')
 // pull in Mongoose model for events
 const Event = require('../models/event')
 const Pet = require('../models/pet')
+const event = require('../models/event')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -49,6 +50,7 @@ router.get('/events', /*requireToken,*/ (req, res, next) => {
 router.get('/events/:id', /*requireToken,*/ (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Event.findById(req.params.id)
+		.populate('attendies')
 		.populate('owner')
 		.populate('comments.author')
 		.then(handle404)
@@ -109,6 +111,7 @@ router.patch('/events/:id', requireToken, removeBlanks, (req, res, next) => {
 // 	Event.findById(req.params.id)
 // 		Pet.find()
 // })
+
 
 // DESTROY
 // DELETE /events/5a7db6c74d55bc51bdf39793
