@@ -50,7 +50,7 @@ router.get('/events', /*requireToken,*/ (req, res, next) => {
 router.get('/events/:id', /*requireToken,*/ (req, res, next) => {
 	// req.params.id will be set based on the `:id` in the route
 	Event.findById(req.params.id)
-		.populate('attendies')
+		.populate('attendants')
 		.populate('owner')
 		.populate('comments.author')
 		.then(handle404)
@@ -65,8 +65,8 @@ router.get('/events/:id', /*requireToken,*/ (req, res, next) => {
 router.post('/events', requireToken, (req, res, next) => {
 	// set owner of new event to be current user
 	req.body.event.owner = req.user.id
-
 	Event.create(req.body.event)
+		.then(handle404)
 		// respond to succesful `create` with status 201 and JSON of new "event"
 		.then((event) => {
 			res.status(201).json({ event: event.toObject() })

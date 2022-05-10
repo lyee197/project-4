@@ -113,9 +113,10 @@ router.patch('/events/:eventId/:petId', requireToken, removeBlanks, (req, res, n
 		.then((event) => {
 				console.log('This is petId inside promise chain', petId)
 				console.log('this is the event', event)
-				event.attendies.push(petId)
+				event.attendants.push(petId)
 				Pet.findById(petId)
 					.then(pet => {
+						console.log('this is the pet', pet)
 						pet.events.push(eventId)
 						pet.save()
 						event.save()
@@ -179,20 +180,13 @@ router.delete('/events/:eventId/:petId', requireToken, (req, res, next) => {
 		.then((event) => {
 			const petId = req.params.petId
 			event.pets.remove(petId)
-		})
-		Pet.findById(petId)
-			.then(pet => {
-				pet.events.removes(eventId)
-				pet.save()
-				Event.save()
-			})
-	Pet.findById(req.params.id)
-		.then(handle404)
-		.then((pet) => {
-			// throw an error if current user doesn't own `pet`
-			requireOwnership(req, pet)
-			// delete the pet ONLY IF the above didn't throw
-			pet.deleteOne()
+			Pet.findById(petId)
+				.then(pet => {
+					pet.events.remove(eventId)
+					pet.save()
+					event.save()
+				})
+				.catch(next)
 		})
 		// send back 204 and no content if the deletion succeeded
 		.then(() => res.sendStatus(204))

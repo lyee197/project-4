@@ -40,9 +40,9 @@ router.post('/comments/:eventId', requireToken, (req, res, next) => {
         .then(handle404)
         // push the comment to comments array
         .then(event => {
-            console.log('this is comment.author', comment.author)
-            console.log('this is the event', event)
-            console.log('this is the comment', comment)
+            // console.log('this is comment.author', comment.author)
+            // console.log('this is the event', event)
+            // console.log('this is the comment', comment)
             event.comments.push(comment)
             // save the comment
             return event.save()
@@ -58,16 +58,13 @@ router.post('/comments/:eventId', requireToken, (req, res, next) => {
 router.patch('/comments/:eventId/:commentId', requireToken, removeBlanks, (req, res, next) => {
     const commentId = req.params.commentId
     const eventId = req.params.eventId
-
     Event.findById(eventId)
         .then(handle404)
         .then(event => {
             const theComment = event.comments.id(commentId)
             console.log('this is the original event', theComment)
             //requireOwnership(req, event)
-
             theComment.set(req.body.comment)
-
             return event.save()
         })
         .then(() => res.sendStatus(204))
@@ -79,7 +76,6 @@ router.patch('/comments/:eventId/:commentId', requireToken, removeBlanks, (req, 
 router.delete('/comments/:eventId/:commentId', requireToken, (req, res, next) => {
     const commentId = req.params.commentId
     const eventId = req.params.eventId
-
     Event.findById(eventId)
         // if event not found, throw 404
         .then(handle404)
